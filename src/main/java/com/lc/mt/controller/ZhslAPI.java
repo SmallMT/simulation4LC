@@ -28,9 +28,10 @@ public class ZhslAPI {
 
     //模拟浪潮提交表单数据
     @PostMapping(value = "saveData")
-    public String saveData(HttpServletRequest request){
-        String formId = request.getParameter("formId");
-        String formData = request.getParameter("formData");
+    public String saveData(@RequestBody String dataStr){
+        JSONObject json = JSONObject.fromObject(dataStr);
+        String formId = json.getString("formId");
+        String formData = json.getString("formData");
         //需要入库的数据
         Document document = new Document();
         JSONObject data = JSONObject.fromObject(formData);
@@ -72,7 +73,7 @@ public class ZhslAPI {
 
     //模拟浪潮文件上传网盘
     @PostMapping(value = "upfile")
-    public String up(HttpServletRequest request, @RequestParam MultipartFile file) {
+    public String up(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
         String uuid = mongoUtils.up(file);
         JSONObject msg = new JSONObject();
         if (null != msg ) {

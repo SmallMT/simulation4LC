@@ -37,5 +37,13 @@
             <version>4.5.4</version>
         </dependency>
     </dependencies>
-
+    <build>
+        <finalName>simulation4LC</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
