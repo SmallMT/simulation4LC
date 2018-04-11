@@ -38,7 +38,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>simulation4LC</finalName>
+        <finalName>lc</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

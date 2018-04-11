@@ -2,6 +2,7 @@ package com.lc.mt.controller;
 
 import com.lc.mt.utils.MongoUtils;
 import com.lc.mt.utils.TableName;
+import com.mongodb.WriteResult;
 import net.sf.json.JSONObject;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,10 +105,12 @@ public class ZhslAPI {
 
     //模拟申报事项
     @PostMapping("webapply")
-    public String webApply(@RequestParam(value = "postdata") String postdata,@RequestParam(value = "itemCode") String itemCode){
+    public String webApply(@RequestBody String args){
 
-        //解析postdata
-        JSONObject object = JSONObject.fromObject(postdata);
+        //args
+        JSONObject object = JSONObject.fromObject(args);
+        String itemCode = object.getString("itemCode");
+        object.remove("itemCode");
         Document document = new Document();
         document.put("postdata",object);
         document.put("applyTime",new Date());
@@ -118,6 +121,30 @@ public class ZhslAPI {
         result.put("receiveNum",receiveNum);
         result.put("state","200");
         return result.toString();
+    }
+
+    //删除我的办件信息
+    @GetMapping("deleteitem")
+    public String deleteItem(@RequestParam("dataId") String dataId){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("dataId").is(dataId));
+        mongoTemplate.remove(query,TableName.LC_SAVEDATA);
+        return "ok";
+    }
+
+    //修改我的办件信息
+    @PostMapping("updateitem")
+    public String updateItem(@RequestBody String data){
+        JSONObject dataJSON = JSONObject.fromObject(data);
+        String dataId = dataJSON.getString("dataId");
+        dataJSON.remove("dataId");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("dataId").is(dataId));
+        Document doc = mongoTemplate.findAndRemove(query,Document.class,TableName.LC_SAVEDATA);
+        doc.put("formData",dataJSON);
+        doc.put("saveTime",new Date());
+        mongoTemplate.insert(doc,TableName.LC_SAVEDATA);
+        return "ok";
     }
 
 }
